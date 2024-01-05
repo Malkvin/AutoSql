@@ -13,7 +13,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Optional;
 
+//нигде в тестаз не ипользовали createQuery 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    //название класса не совпадает с названием файла
 public class CourierInfoEntity extends AbstractTest{
 
     @Test
@@ -21,6 +23,7 @@ public class CourierInfoEntity extends AbstractTest{
 
     void getCourier_whenValid_shouldReturn() throws SQLException {
         //given
+        //таблица courier_info
         String sql = "SELECT * FROM courierInfo WHERE first_name='Bob'";
         Statement stmt  = getConnection().createStatement();
         int countTableSize = 0;
@@ -29,6 +32,7 @@ public class CourierInfoEntity extends AbstractTest{
         while (rs.next()) {
             countTableSize++;
         }
+        //таблица courier_info
         final Query query = getSession().createSQLQuery("SELECT * FROM courier").addEntity(CourierInfoEntity.class);
         //then
         Assertions.assertEquals(8, countTableSize);
@@ -40,6 +44,7 @@ public class CourierInfoEntity extends AbstractTest{
     @CsvSource({"John, Rython", "Kate, Looran", "Bob, Kolaris"})
     void getCourierById_whenValid_shouldReturn(String name, String lastName) throws SQLException {
         //given
+        //таблица courier_info
         String sql = "SELECT * FROM courier WHERE first_name='" + name + "'";
         Statement stmt  = getConnection().createStatement();
         String nameString = "";
@@ -68,8 +73,10 @@ public class CourierInfoEntity extends AbstractTest{
         session.persist(entity);
         session.getTransaction().commit();
 
+        //таблица courier_info
         final Query query = getSession()
                 .createSQLQuery("SELECT * FROM courier WHERE courier_id="+2).addEntity(CourierInfoEntity.class);
+        //почему тут CustomersEntity ?
         CourierInfoEntity creditEntity = (CustomersEntity) query.uniqueResult();
         //then
         Assertions.assertNotNull(creditEntity);
@@ -80,6 +87,7 @@ public class CourierInfoEntity extends AbstractTest{
     @Order(4)
     void deleteCourier_whenValid_shouldDelete() {
         //given
+        //таблица courier_info
         final Query query = getSession()
                 .createSQLQuery("SELECT * FROM courier WHERE courier_id=" + 2).addEntity(CourierInfoEntity.class);
         Optional<CourierInfoEntity> courierEntity = (Optional<CourierInfoEntity>) query.uniqueResultOptional();
@@ -90,6 +98,7 @@ public class CourierInfoEntity extends AbstractTest{
         session.delete(courierEntity.get());
         session.getTransaction().commit();
         //then
+        //таблица courier_info
         final Query queryAfterDelete = getSession()
                 .createSQLQuery("SELECT * FROM courierInfo WHERE courier_id=" + 16).addEntity(CourierInfoEntity.class);
         Optional<CourierInfoEntity> courierInfoEntityAfterDelete = (Optional<CourierInfoEntity>) queryAfterDelete.uniqueResultOptional();
